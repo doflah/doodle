@@ -2,6 +2,7 @@
 #define BACKEND_PLUGIN_H
 
 #include <QObject>
+#include <QDir>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlExtensionPlugin>
 
@@ -20,13 +21,21 @@ class DoodleStore : public QObject
     Q_OBJECT
     Q_PROPERTY(QString appDir READ appDir)
 
+public:
+    DoodleStore() {
+        QDir dir(appDir());
+        if (!dir.exists()) {
+            dir.mkdir(appDir());
+        }
+    }
+
 protected:
     QString appDir() {
-        QString dir = getenv("XDG_DATA_HOME");
-        if (dir.isEmpty()) {
+        QString dirName = getenv("XDG_DATA_HOME");
+        if (dirName.isEmpty()) {
             return "/tmp";
         }
-        return dir + "/doodle.doflah";
+        return dirName + "/doodle.doflah";
     }
 };
 
