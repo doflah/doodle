@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-15 21:48-0400\n"
+"POT-Creation-Date: 2015-03-29 13:37-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../app/doodle.qml:31
+#: ../app/doodle.qml:36
 msgid "Settings"
 msgstr ""
 
-#: ../app/doodle.qml:49
+#: ../app/doodle.qml:58
 msgid "Cancel"
 msgstr ""
 
-#: ../app/doodle.qml:60
+#: ../app/doodle.qml:69
 msgid "Clear"
 msgstr ""
 
-#: ../app/doodle.qml:68 ../app/doodle.qml:112
+#: ../app/doodle.qml:77
 msgid "Color"
 msgstr ""
 
-#: /home/doflaherty/Projects/build-doodle-UbuntuSDK_for_armhf_GCC_ubuntu_sdk_14_10_utopic-Default/po/doodle.desktop.in.h:1
+#: ../app/doodle.qml:82
+msgid "Background"
+msgstr ""
+
+#: ../app/doodle.qml:137
+msgid "Pen Color"
+msgstr ""
+
+#: ../app/doodle.qml:154
+msgid "Background Color"
+msgstr ""
+
+#: /home/doflaherty/Projects/build-doodle-Desktop-Default/po/doodle.desktop.in.h:1
 msgid "Doodle"
 msgstr ""

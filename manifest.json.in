@@ -6,13 +6,11 @@
     "hooks": {
         "doodle": {
             "apparmor": "doodle.apparmor",
-            "desktop":  "doodle.desktop",
-            "content-hub":  "hub.json"
+            "desktop": "doodle.desktop",
+            "content-hub": "hub.json"
         }
     },
-    "version": "0.1",
+    "version": "0.2",
     "maintainer": "Dennis O'Flaherty <dennis.oflaherty@gmail.com>",
-    "framework" : "ubuntu-sdk-14.10"
+    "framework": "ubuntu-sdk-14.10"
 }
-
-

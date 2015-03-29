@@ -1,7 +1,11 @@
 import QtQuick 2.0
+
 import Ubuntu.Components 1.1
 import Ubuntu.Components.Popups 1.0
 import Ubuntu.Content 0.1
+
+import U1db 1.0 as U1db
+
 import Doodle 1.0
 
 MainView {
@@ -19,7 +23,8 @@ MainView {
     height: units.gu(76)
 
     property var transfer: null
-    property string brushColor: "black"
+    property string fgColor: "black"
+    property string bgColor: "transparent"
 
     DoodleStore { id: storage }
 
@@ -32,7 +37,11 @@ MainView {
             onTriggered: {
                 if (!main.transfer) return;
                 var url = storage.appDir + "/foo.png";
-                if (canvas.save(url)) {
+                var ctx = dummy.getContext("2d");
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, dummy.width, dummy.height)
+                ctx.drawImage(canvas, 0, 0);
+                if (dummy.save(url)) {
                     main.transfer.items = [
                         contentItemComponent.createObject(main.transfer, {"url": url})
                     ];
@@ -68,31 +77,47 @@ MainView {
             text: i18n.tr("Color");
             onTriggered: PopupUtils.open(colorPicker)
         }
+        property var a_bg: Action {
+            iconName: "browser-tabs"
+            text: i18n.tr("Background");
+            onTriggered: PopupUtils.open(bgPicker)
+        }
 
         head.backAction: main.transfer !== null ? a_cancel : null
-        head.actions: main.transfer !== null ? [a_accept, a_clear, a_color] : [a_clear, a_color]
+        head.actions: main.transfer !== null ? [a_accept, a_clear, a_color, a_bg] : [a_clear, a_color, a_bg]
+
+        Rectangle {
+            color: bgColor
+            anchors.fill: parent
+        }
+
+        Canvas {
+            id: dummy
+            visible: false
+            anchors.fill: parent
+        }
 
         Canvas {
             id: canvas
             anchors.fill: parent
 
             MouseArea {
-                anchors.fill: parent
-                onMouseXChanged: {
-                    var ctx = canvas.getContext("2d");
-                    ctx.fillStyle = brushColor
-                    ctx.beginPath();
-                    ctx.arc(mouse.x, mouse.y, units.gu(1), 0, Math.PI * 2);
-                    ctx.fill();
-                    canvas.requestPaint();
-                }
+                property int radius: units.gu(1)
 
-                onMouseYChanged: {
+                anchors.fill: parent
+                onMouseXChanged: draw(mouse)
+                onMouseYChanged: draw(mouse)
+
+                function draw(mouse) {
                     var ctx = canvas.getContext("2d");
-                    ctx.fillStyle = brushColor
-                    ctx.beginPath();
-                    ctx.arc(mouse.x, mouse.y, units.gu(1), 0, Math.PI * 2);
-                    ctx.fill();
+                    if (fgColor === "transparent") {
+                        ctx.clearRect(mouse.x - radius, mouse.y - radius, radius * 2, radius * 2);
+                    } else {
+                        ctx.fillStyle = fgColor
+                        ctx.beginPath();
+                        ctx.arc(mouse.x, mouse.y, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                     canvas.requestPaint();
                 }
             }
@@ -109,13 +134,31 @@ MainView {
 
         Dialog {
             id: colorPickerDlg
-            title: i18n.tr("Color")
+            title: i18n.tr("Pen Color")
             Column {
                 ColorButton { color: "red" }
                 ColorButton { color: "green" }
                 ColorButton { color: "blue" }
                 ColorButton { color: "yellow" }
                 ColorButton { color: "black" }
+                ColorButton { text: "Eraser" }
+            }
+        }
+    }
+
+    Component {
+        id: bgPicker
+
+        Dialog {
+            id: bgPickerDlg
+            title: i18n.tr("Background Color")
+            Column {
+                BackgroundButton { color: "red" }
+                BackgroundButton { color: "green" }
+                BackgroundButton { color: "blue" }
+                BackgroundButton { color: "yellow" }
+                BackgroundButton { color: "black" }
+                BackgroundButton { text: "None" }
             }
         }
     }
@@ -123,5 +166,28 @@ MainView {
     Connections {
         target: ContentHub
         onExportRequested: main.transfer = transfer
+    }
+
+    U1db.Database {
+        id: doodledb
+        path: "doodledb"
+    }
+
+    U1db.Document {
+        id: colorDoc
+        database: doodledb
+        docId: 'colors'
+        create: true
+        defaults: { "fgColor": fgColor, "bgColor": bgColor }
+    }
+
+    onFgColorChanged: colorDoc.contents = {fgColor: fgColor, bgColor: bgColor}
+    onBgColorChanged: colorDoc.contents = {fgColor: fgColor, bgColor: bgColor}
+
+    Component.onCompleted: {
+        // pull the contents out - otherwise bgColor gets overwritten when we restore fgColor
+        var settings = colorDoc.contents;
+        fgColor = settings.fgColor;
+        bgColor = settings.bgColor;
     }
 }

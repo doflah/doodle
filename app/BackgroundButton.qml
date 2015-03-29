@@ -5,7 +5,7 @@ import Ubuntu.Components.Popups 1.0
 Button {
     width: parent.width
     onClicked: {
-        main.fgColor = text === "" ? color : "transparent";
-        PopupUtils.close(colorPickerDlg)
+        main.bgColor = text === "" ? color : "transparent";
+        PopupUtils.close(bgPickerDlg)
     }
 }
